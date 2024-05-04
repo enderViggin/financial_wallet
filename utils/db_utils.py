@@ -1,8 +1,9 @@
 from typing import List, Dict, Optional
 import json
 import os
+import uuid
 
-from .utils import IncomeData
+from .utils import IncomeData, ExpenseData
 
 
 class DBUtils:
@@ -64,4 +65,12 @@ class DBUtils:
 
         db: Dict = self.get_db()
         db['income'].append(income)
+        self.save_db_changes(db)
+
+
+    def add_new_expense(self, expense: ExpenseData) -> None:
+        """ Добавляем новый расход в БД """
+
+        db: Dict = self.get_db()
+        db['expenses'].append(expense)
         self.save_db_changes(db)

@@ -247,6 +247,13 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
         DBUtils().add_new_income(information_about_income)
 
 
+    def add_expense(self) -> None:
+        """ Добавляем расход указанный пользователем """
+
+        information_about_expense: ExpenseData = self.get_information_about_income_expense('expense')
+        DBUtils().add_new_expense(information_about_expense)
+
+
     def start(self) -> None:
 
         self.show_menu_for_adding_income_expenses(self.possible_actions)
@@ -260,7 +267,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
             case '0':
                 self.add_income()
             case '1':
-                pass
+                self.add_expense()
 
         AddingIncomeExpensesFinancialWallet().start()
 
