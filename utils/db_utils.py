@@ -26,6 +26,13 @@ class DBUtils:
             return database
 
 
+    def save_db_changes(self,  db: Dict) -> None:
+        """ Сохраняем проделанные изменения с БД """
+
+        with open(self.get_path_to_db(), 'w') as file:
+            json.dump(db, file)
+
+
     def sort_list_of_income_by_date(self, list_of_all_income: List[IncomeData]) -> List[IncomeData]:
         """ Сортируем список доходов по дате """
 
@@ -50,3 +57,11 @@ class DBUtils:
                 return sorted_list_of_income_by_date
             case _:
                 return list_of_all_income
+
+
+    def add_new_income(self, income: IncomeData) -> None:
+        """ Добавляем новый доход в БД """
+
+        db: Dict = self.get_db()
+        db['income'].append(income)
+        self.save_db_changes(db)

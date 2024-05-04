@@ -1,6 +1,7 @@
-from typing import NoReturn, Union, Optional, List, Tuple
+from typing import NoReturn, Union, Optional, List, Tuple, Literal
+from datetime import datetime
 
-from .utils import IncomeData
+from .utils import IncomeData, ExpenseData
 from .db_utils import DBUtils
 
 
@@ -74,6 +75,18 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
+    def show_menu_for_adding_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
+        """ Показываем меню добавления доходов/расходов """
+
+        text: str = '\n\n ### МЕНЮ добавления ДОХОДОВ/РАСХОДОВ ###\n ## Выберите дальнейшее действие\n\n'
+
+        for count, action in enumerate(possible_actions):
+            text += f' [{count:02d}] {action}\n'
+
+        print(text)
+
+
+
 class ViewingIncomeFinancialWallet:
     """ Класс связанный с просмотром доходов """
 
@@ -125,6 +138,112 @@ class ViewingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDispla
                 pass
 
 
+class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplayFinancialWallet):
+    """ Класс связанный с добавлением доходов/расходов """
+
+    def __init__(self):
+        self.possible_actions: Tuple[str, str] = ('Доходы', 'Расходы')
+        self.number_of_possible_actions: int = len(self.possible_actions)
+
+
+    def get_following_action_user(self) -> str:
+        """ Получаем следующее действие пользователя """
+
+        designation_back: str = 'b';
+        designation_exit: str = 'e';
+        possible_answers: List[Union[str, int]] = list(map(
+            str,
+            list(range(self.number_of_possible_actions))
+        ))
+        for designation in [designation_back, designation_exit]:
+            possible_answers.append(designation)
+
+        user_response: str = self.get_user_response(
+            message='Что теперь?',
+            possible_answers=possible_answers,
+            add_additional_actions=True
+        )
+        return user_response
+
+
+    def get_information_about_income_expense(self, category: str) ->  Union[IncomeData, ExpenseData]:
+        """ Получаем информацию о доходе/расходе для последующего добавления """
+
+        def get_amount() -> int:
+            """ Получаем сумму продукта """
+
+            user_response: Union[int, Literal['b', 'e']] = self.get_user_response(
+                message='Укажите необходимую сумму',
+                add_additional_actions=True
+            )
+            match user_response:
+                case 'b':
+                    AddingIncomeExpensesFinancialWallet().start()
+                case 'e':
+                    exit()
+                case _:
+                    return user_response
+
+
+        def get_description() -> str:
+            """ Получаем описание """
+
+            user_response: str = self.get_user_response(
+                message='Укажите соответствующее описание',
+                add_additional_actions=True
+            )
+            match user_response:
+                case 'b':
+                    AddingIncomeExpensesFinancialWallet().start()
+                case 'e':
+                    exit()
+                case _:
+                    return user_response
+
+
+        # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
+
+        if not category in ['income', 'expense']:
+            raise ValueError(f'Передана неверная категория - {category}')
+
+        amount: int = get_amount()
+        description: str = get_description()
+        date_of_addition: datetime = datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+
+        result: Union[IncomeData, ExpenseData] = {
+            'date': date_of_addition,
+            'category': category,
+            'amount': amount,
+            'description': description
+        }
+        return result
+
+
+    def add_income(self) -> None:
+        """ Добавляем доход """
+
+        information_about_income: IncomeData = self.get_information_about_income_expense('income')
+        DBUtils().add_new_income(information_about_income)
+
+
+    def start(self) -> None:
+
+        self.show_menu_for_adding_income_expenses(self.possible_actions)
+        user_response: str = self.get_following_action_user()
+
+        match user_response:
+            case 'b':
+                FinancialWallet().start()
+            case 'e':
+                exit()
+            case '0':
+                self.add_income()
+            case '1':
+                pass
+
+        AddingIncomeExpensesFinancialWallet().start()
+
+
 class FinancialWallet(ViewingIncomeExpensesFinancialWallet):
     """ Класс отвечающий за взаимодействие пользователя с финансовым кошельком """
 
@@ -142,6 +261,8 @@ class FinancialWallet(ViewingIncomeExpensesFinancialWallet):
             case 0:
                 ViewingIncomeExpensesFinancialWallet().start()
             case 1:
-                pass
+                AddingIncomeExpensesFinancialWallet().start()
             case 2:
                 pass
+            case _:
+                exit()
