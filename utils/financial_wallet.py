@@ -74,6 +74,13 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
+class ViewingIncomeFinancialWallet:
+    """ Класс связанный с просмотром доходов """
+
+    def start(self) -> None:
+        list_of_all_income: List[IncomeData] = DBUtils().get_list_of_all_income()
+
+
 class ViewingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplayFinancialWallet):
     """ Класс связанный с просмотром доходов/расходов """
 
@@ -113,7 +120,7 @@ class ViewingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDispla
             case 'e':
                 exit()
             case '0':
-                pass
+                ViewingIncomeFinancialWallet().start()
             case '1':
                 pass
 
