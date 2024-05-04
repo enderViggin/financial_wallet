@@ -1,10 +1,12 @@
 from typing import TypedDict, Literal
-from datetime import datetime
+from uuid import UUID
 
 
 class IncomeData(TypedDict):
     """ Сущность "Доход" """
 
+    id: UUID
+    name: str
     date: str
     category: Literal['income']
     amount: int
@@ -13,6 +15,8 @@ class IncomeData(TypedDict):
 class ExpenseData(TypedDict):
     """ Сущность "Расход" """
 
+    id: UUID
+    name: str
     date: str
     category: Literal['expense']
     amount: int

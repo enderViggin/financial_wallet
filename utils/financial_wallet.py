@@ -1,5 +1,7 @@
 from typing import NoReturn, Union, Optional, List, Tuple, Literal
 from datetime import datetime
+import uuid
+from uuid import UUID
 
 from .utils import IncomeData, ExpenseData
 from .db_utils import DBUtils
@@ -169,6 +171,21 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
     def get_information_about_income_expense(self, category: str) ->  Union[IncomeData, ExpenseData]:
         """ Получаем информацию о доходе/расходе для последующего добавления """
 
+        def get_name() -> str:
+            """ Получаем название """
+
+            user_response: str = self.get_user_response(
+                message='Укажите необходимое название',
+                add_additional_actions=True
+            )
+            match user_response:
+                case 'b':
+                    AddingIncomeExpensesFinancialWallet().start()
+                case 'e':
+                    exit()
+                case _:
+                    return user_response
+
         def get_amount() -> int:
             """ Получаем сумму продукта """
 
@@ -206,11 +223,15 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
         if not category in ['income', 'expense']:
             raise ValueError(f'Передана неверная категория - {category}')
 
+        new_id: UUID = str(uuid.uuid4())
+        name: str = get_name()
         amount: int = get_amount()
         description: str = get_description()
         date_of_addition: datetime = datetime.now().strftime('%H:%M:%S %d-%m-%Y')
 
         result: Union[IncomeData, ExpenseData] = {
+            'id': new_id,
+            'name': name,
             'date': date_of_addition,
             'category': category,
             'amount': amount,
@@ -220,7 +241,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
 
 
     def add_income(self) -> None:
-        """ Добавляем доход """
+        """ Добавляем доход указанный пользователем """
 
         information_about_income: IncomeData = self.get_information_about_income_expense('income')
         DBUtils().add_new_income(information_about_income)
