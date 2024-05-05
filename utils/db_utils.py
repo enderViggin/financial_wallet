@@ -71,7 +71,6 @@ class DBUtils:
         list_of_entries_by_date: Union[List[IncomeData], List[ExpenseData]] = sorted(
             list_of_all_entries,
             key=lambda entry: entry['date'],
-            reverse=True
         )
         return list_of_entries_by_date
 
@@ -101,11 +100,9 @@ class DBUtils:
             
             nonlocal type_of_entries, list_of_all_entries
 
-            print('TOE', type_of_entries)
             if type_of_entries == 'all':
                 return list_of_all_entries
             elif type_of_entries == 'splitted':
-                print('YYYYYY')
                 return self.split_list_into_parts(
                     list_of_all_entries,
                     number_of_parts
