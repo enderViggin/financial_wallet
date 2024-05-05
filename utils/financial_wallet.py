@@ -7,7 +7,7 @@ from .utils import IncomeData, ExpenseData
 from .db_utils import DBUtils
 
 
-POSSIBLE_INITIAL_ACTIONS: Tuple[str, str, str] = ('Посмотреть расходы/доходы', 'Добавить расходы/доходы', 'Изменить расходы/доходы')
+POSSIBLE_INITIAL_ACTIONS: Tuple[str, str, str] = ('Посмотреть доходы/расходы', 'Добавить доходы/расходы', 'Изменить доходы/расходы')
 NUMBER_OF_POSSIBLE_INITIAL_ACTIONS: int = len(POSSIBLE_INITIAL_ACTIONS)
 
 class UtilsFinancialWallet:
@@ -24,9 +24,9 @@ class UtilsFinancialWallet:
         """ Получаем ответ от пользователя """
 
         if add_additional_actions:
-            message: str = f'\n ## [b]ack [e]xit\n ## {message}\n >> '
+            message: str = f'\n - [b]ack [e]xit\n - {message}\n > '
         else:
-            message: str = f' ## {message}\n >> '
+            message: str = f' - {message}\n > '
 
         while True:
             try:
@@ -51,7 +51,7 @@ class MessageToDisplayFinancialWallet:
     def show_welcome_message(self) -> None:
         """ Показываем приветственное сообщение пользователю """
 
-        text: str = "\n ### ДОБРО ПОЖАЛОВАТЬ В FinancialWallet ###\n ## Здесь вы можете отслеживать свои доходы и расходы.\n"""
+        text: str = "\n ### ДОБРО ПОЖАЛОВАТЬ В FinancialWallet ###\n ### Здесь вы можете отслеживать свои доходы и расходы.\n"""
         print(text)
         self.show_options_for_initial_actions()
 
@@ -69,7 +69,7 @@ class MessageToDisplayFinancialWallet:
     def show_menu_for_viewing_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
         """ Показываем меню просмотра доходов/расходов """
 
-        text: str = '\n\n ### МЕНЮ ДОХОДЫ/РАСХОДЫ ###\n ## Выберите дальнейшее действие\n\n'
+        text: str = '\n\n ### МЕНЮ ПРОСМОТРА ДОХОДЫ/РАСХОДЫ ###\n ### Выберите дальнейшее действие\n\n'
 
         for count, action in enumerate(possible_actions):
             text += f' [{count:02d}] {action}\n'
@@ -80,7 +80,7 @@ class MessageToDisplayFinancialWallet:
     def show_menu_for_adding_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
         """ Показываем меню добавления доходов/расходов """
 
-        text: str = '\n\n ### МЕНЮ добавления ДОХОДОВ/РАСХОДОВ ###\n ## Выберите дальнейшее действие\n\n'
+        text: str = '\n\n ### МЕНЮ ДОБАВЛЕНИЯ ДОХОДОВ/РАСХОДОВ ###\n ### Выберите дальнейшее действие\n\n'
 
         for count, action in enumerate(possible_actions):
             text += f' [{count:02d}] {action}\n'
@@ -117,7 +117,7 @@ class ViewingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDispla
             possible_answers.append(designation)
 
         user_response: str = self.get_user_response(
-            message='Что теперь?',
+            message='ВЫБЕРИТЕ что делать дальше (введите номер):',
             possible_answers=possible_answers,
             add_additional_actions=True
         )
@@ -161,7 +161,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
             possible_answers.append(designation)
 
         user_response: str = self.get_user_response(
-            message='Что теперь?',
+            message='ВЫБЕРИТЕ что делать дальше (введите номер или действие):',
             possible_answers=possible_answers,
             add_additional_actions=True
         )
@@ -175,7 +175,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
             """ Получаем название """
 
             user_response: str = self.get_user_response(
-                message='Укажите необходимое название',
+                message='1/3 ВВЕДИТЕ необходимое название:',
                 add_additional_actions=True
             )
             match user_response:
@@ -190,7 +190,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
             """ Получаем сумму продукта """
 
             user_response: Union[int, Literal['b', 'e']] = self.get_user_response(
-                message='Укажите необходимую сумму',
+                message='2/3 ВВЕДИТЕ соответствующую сумму:',
                 add_additional_actions=True
             )
             match user_response:
@@ -206,7 +206,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
             """ Получаем описание """
 
             user_response: str = self.get_user_response(
-                message='Укажите соответствующее описание',
+                    message='3/3 ВВЕДИТЕ необходимое описание:',
                 add_additional_actions=True
             )
             match user_response:
@@ -280,7 +280,7 @@ class FinancialWallet(ViewingIncomeExpensesFinancialWallet):
 
         self.show_welcome_message()
         user_response: int = self.get_user_response(
-            message='Итак, что делаем дальше?',
+            message='ВЫБЕРИТЕ необходимое действие (введите номер):',
             type_of_response='int',
             possible_answers=list(range(NUMBER_OF_POSSIBLE_INITIAL_ACTIONS))
         )
