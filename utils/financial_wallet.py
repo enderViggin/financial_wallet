@@ -88,6 +88,19 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
+    def show_message_of_successfully_added_income_expense(self, category: str) -> None:
+        """ Показываем сообщение об успешно добавленном доходе/расходе """
+
+        if category == 'income':
+            message: str = 'УСПЕШНО добавлен указанный доход'
+        elif category == 'expense':
+            message: str = 'УСПЕШНО добавлен указанный расход'
+        else:
+            raise ValueError(f'Передана неверная категория - {category}')
+
+        print(f'\n [*] {message}')
+
+
 
 class ViewingIncomeFinancialWallet:
     """ Класс связанный с просмотром доходов """
@@ -266,8 +279,10 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
                 exit()
             case '0':
                 self.add_income()
+                self.show_message_of_successfully_added_income_expense('income')
             case '1':
                 self.add_expense()
+                self.show_message_of_successfully_added_income_expense('expense')
 
         AddingIncomeExpensesFinancialWallet().start()
 
