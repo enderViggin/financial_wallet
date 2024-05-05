@@ -38,11 +38,11 @@ class UtilsFinancialWallet:
 
                 if not possible_answers: return response
                 if response in possible_answers: return response
-                else: print('\n [*] Выберите вариант из указанных.\n')
+                else: print('\n [*] НЕВЕРНО, выберите вариант из указанных.\n')
             except UnicodeDecodeError:
                 print('\n Не используйте специальные символы в своих ответах.\n')
             except ValueError:
-                print('\n [*] Выберите вариант из указанных.\n')
+                print('\n [*] НЕВЕРНО, выберите вариант из указанных.\n')
 
 
 class MessageToDisplayFinancialWallet:
@@ -51,7 +51,7 @@ class MessageToDisplayFinancialWallet:
     def show_welcome_message(self) -> None:
         """ Показываем приветственное сообщение пользователю """
 
-        text: str = "\n ### ДОБРО ПОЖАЛОВАТЬ В FinancialWallet ###\n ### Здесь вы можете отслеживать свои доходы и расходы.\n"""
+        text: str = "\n ----- ДОБРО ПОЖАЛОВАТЬ В FinancialWallet\n ----- Здесь вы можете отслеживать свои доходы и расходы.\n"""
         print(text)
         self.show_options_for_initial_actions()
 
@@ -69,7 +69,7 @@ class MessageToDisplayFinancialWallet:
     def show_menu_for_viewing_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
         """ Показываем меню просмотра доходов/расходов """
 
-        text: str = '\n\n ### МЕНЮ ПРОСМОТРА ДОХОДЫ/РАСХОДЫ ###\n ### Выберите дальнейшее действие\n\n'
+        text: str = '\n\n ----- МЕНЮ ПРОСМОТРА ДОХОДЫ/РАСХОДЫ\n ----- Выберите дальнейшее действие\n\n'
 
         for count, action in enumerate(possible_actions):
             text += f' [{count:02d}] {action}\n'
@@ -101,16 +101,131 @@ class MessageToDisplayFinancialWallet:
         print(f'\n [*] {message}')
 
 
+    def show_initial_message_for_list_of_income_expenses(self, category: str) -> None:
+        """ Показываем начальное сообщение для списка доходов """
 
-class ViewingIncomeFinancialWallet:
-    """ Класс связанный с просмотром доходов """
+        if category == 'income':
+            message: str = '\n\n ----- СПИСОК ДОБАВЛЕННЫХ ДОХОДОВ\n ----- Выберите дальнейшее действие'
+        elif category == 'expense':
+            message: str = '\n\n ----- СПИСОК ДОБАВЛЕННЫХ РАСХОДОВ\n ----- Выберите дальнейшее действие'
+        else:
+            raise ValueError(f'Передана неверная категория - {category}')
+        print(message)
 
-    def start(self) -> None:
-        list_of_all_income: List[IncomeData] = DBUtils().get_list_of_all_income()
+
+class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
+    """ Отображаем конкретный список записей (доходов/расходов) для пользователя """
+
+    def display_separate_entry(
+        self,
+        count: int,
+        entry: Union[IncomeData, ExpenseData]
+    ) -> None:
+        """ Отображаем отдельную запись """
+
+        text: str = '\n'
+        text += f' #{count} {entry["date"]} \n'
+        text += f' | {entry["name"]} \n'
+        text += f' | {entry["amount"]} \n'
+        text += f' | {entry["description"]} \n'
+        print(text)
 
 
-class ViewingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplayFinancialWallet):
-    """ Класс связанный с просмотром доходов/расходов """
+    def execute_following_action_user(
+        self,
+        category: str,
+        total_number_of_parts: int
+    ) -> str:
+        """ Получаем следующее действие пользователя """
+
+        designation_back: str = 'b';
+        designation_exit: str = 'e';
+        possible_answers: List[Union[str, int]] = list(map(
+            str,
+            list(range(1, total_number_of_parts + 1))
+        ))
+        for designation in [designation_back, designation_exit]:
+            possible_answers.append(designation)
+
+        user_response: str = self.get_user_response(
+            message='ВЫБЕРИТЕ что делать дальше (номер страницы или действие):',
+            possible_answers=possible_answers,
+            add_additional_actions=True
+        )
+
+        match user_response:
+            case 'b':
+                MenuForViewingIncomeExpenseFinancialWallet().start()
+            case 'e':
+                exit()
+            case _:
+                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
+                    category=category,
+                    part_of_entries=int(user_response)
+                )
+
+
+    def display_list_of_all_entries(
+        self,
+        split_list_of_entries: Union[List[IncomeData], List[ExpenseData]],
+        part_of_entries: int
+    ) -> None:
+        """ Отображаем список всех записей """
+
+        final_list: List[Union[IncomeData, ExpenseData]] = split_list_of_entries \
+            .final_list[part_of_entries - 1]
+
+        for count, entry in enumerate(final_list, 1):
+            self.display_separate_entry(count, entry)
+
+        pagination: str = '\n ВЫБРАНО: '
+        for part in range(1, split_list_of_entries.total_number_of_parts + 1):
+            if part == part_of_entries:
+                pagination += f'[{part}] '
+            else:
+                pagination += f'{part} '
+
+        print(pagination)
+
+
+    def display_list_of_income_expense(
+        self,
+        category: str,
+        part_of_entries: int = 1
+    ) -> None:
+        """ Отображаем список доходов/расходов """
+
+        def get_split_list_of_entries() -> Tuple[List[List[IncomeData]], int]:
+            """ Получаем разделенный список записей """
+            
+            if category == 'income':
+                return DBUtils().get_list_of_all_income_expense(
+                    category=category,
+                    type_of_entries='splitted'
+                )
+            elif category == 'expense':
+                return DBUtils().get_list_of_all_income_expense(
+                    category=category,
+                    type_of_entries='splitted'
+                )
+            else:
+                raise ValueError(f'Передана неверная категория - {category}')
+
+
+        # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
+
+        split_list_of_entries: Tuple[List[List[IncomeData]], int] = get_split_list_of_entries()
+        MessageToDisplayFinancialWallet().show_initial_message_for_list_of_income_expenses(category)
+        self.display_list_of_all_entries(split_list_of_entries, part_of_entries)
+        self.execute_following_action_user(
+            category,
+            split_list_of_entries.total_number_of_parts
+        )
+
+
+
+class MenuForViewingIncomeExpenseFinancialWallet(UtilsFinancialWallet, MessageToDisplayFinancialWallet):
+    """ Класс связанный с меню просмотра доходов/расходов """
 
     def __init__(self):
         self.possible_actions: Tuple[str, str] = ('Доходы', 'Расходы')
@@ -148,9 +263,9 @@ class ViewingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDispla
             case 'e':
                 exit()
             case '0':
-                ViewingIncomeFinancialWallet().start()
+                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense('income')
             case '1':
-                pass
+                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense('expense')
 
 
 class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplayFinancialWallet):
@@ -188,7 +303,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
             """ Получаем название """
 
             user_response: str = self.get_user_response(
-                message='1/3 ВВЕДИТЕ необходимое название:',
+                message='1/3 ВВЕДИТЕ название:',
                 add_additional_actions=True
             )
             match user_response:
@@ -287,7 +402,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet, MessageToDisplay
         AddingIncomeExpensesFinancialWallet().start()
 
 
-class FinancialWallet(ViewingIncomeExpensesFinancialWallet):
+class FinancialWallet(MenuForViewingIncomeExpenseFinancialWallet):
     """ Класс отвечающий за взаимодействие пользователя с финансовым кошельком """
 
     def start(self) -> None:
@@ -302,7 +417,7 @@ class FinancialWallet(ViewingIncomeExpensesFinancialWallet):
 
         match user_response:
             case 0:
-                ViewingIncomeExpensesFinancialWallet().start()
+                MenuForViewingIncomeExpenseFinancialWallet().start()
             case 1:
                 AddingIncomeExpensesFinancialWallet().start()
             case 2:
