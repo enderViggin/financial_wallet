@@ -233,12 +233,20 @@ class DBUtils:
         def add_entries_by_amount_sorting() -> None:
             """ Добавляем записи по сортировке суммы """
             
-            nonlocal sorted_list, value
+            nonlocal value
 
             if value[0] == 1:
                 add_entries_by_amount_sorting_in_first_way()
             elif value[0] == 2:
                 add_entries_by_amount_sorting_in_second_way()
+
+        def add_entries_by_date_sorting() -> None:
+            """ Добавляем записи по сортировке даты """
+            
+            nonlocal sorted_list, value, list_of_all_income_expense
+            for entry in list_of_all_income_expense:
+                if not value[1] in entry['date']: continue
+                sorted_list.append(entry)
 
 
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
@@ -252,5 +260,7 @@ class DBUtils:
             add_entries_by_description_sorting()
         elif criteria == 'Сумма':
             add_entries_by_amount_sorting()
+        elif criteria == 'Дата':
+            add_entries_by_date_sorting()
 
         return sorted_list

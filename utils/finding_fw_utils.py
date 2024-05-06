@@ -60,6 +60,17 @@ class FindingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 if second_option: return (2, second_option[0])
                 if first_option: return (1, first_option[0])
 
+        def get_value_for_date() -> str:
+            """ Получаем значение для даты """
+            
+            nonlocal criteria
+            while True:
+                value: str = self.get_user_response(
+                    message='1/1 ВВЕДИТЕ необходимую дату (формат: 21-03-2024):',
+                )
+                first_option: List = re.findall('\d{2,}-\d{2,}-\d{2,}', value)
+                if first_option: return (1, first_option[0])
+
 
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
 
@@ -73,7 +84,8 @@ class FindingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
             value: str = get_value_for_amount()
             return value
         elif criteria == 'Дата':
-            pass
+            value: str = get_value_for_date()
+            return value
         else:
             raise ValueError(f'criteria - {criteria}')
 
