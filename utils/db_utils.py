@@ -84,6 +84,19 @@ class DBUtils:
     ) -> Union[Union[List[IncomeData], List[ExpenseData]], Tuple[List[List], int]]:
         """ Получаем список всех доходов """
 
+        def get_list_of_all_entries() -> Union[List[IncomeData], List[ExpenseData]]:
+            
+            nonlocal category
+            if category == 'income':
+                list_of_all_entries: List[IncomeData] = db['income']
+            elif category == 'expense':
+                list_of_all_entries: List[IncomeData] = db['expenses']
+            else:
+                raise ValueError(f'Передана неверная категория - {category}')
+            return list_of_all_entries
+
+
+
         def sort_list_of_entries() -> Union[List[IncomeData], List[ExpenseData]]:
             """ Сортируем список записей (доходов/расходов) """
             
@@ -115,16 +128,8 @@ class DBUtils:
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
 
         db: Dict = self.get_db()
-
-        if category == 'income':
-            list_of_all_entries: List[IncomeData] = db['income']
-        elif category == 'expense':
-            list_of_all_entries: List[IncomeData] = db['expenses']
-        else:
-            raise ValueError(f'Передана неверная категория - {category}')
-
+        list_of_all_entries: Union[List[IncomeData], List[ExpenseData]] = get_list_of_all_entries()
         list_of_all_entries: Union[List[IncomeData], List[ExpenseData]] = sort_list_of_entries()
-
         final_list: Union[Union[List[IncomeData], List[ExpenseData]], Tuple[List[List], int]] = get_required_type_of_entries()
         return final_list
 
@@ -177,7 +182,7 @@ class DBUtils:
         def add_entries_by_name_sorting() -> None:
             """ Добавляем записи по сортировке имени """
             
-            nonlocal sorted_list, value
+            nonlocal sorted_list, value, list_of_all_income_expense
             for entry in list_of_all_income_expense:
                 if not value in entry['name']: continue
                 entry['name'] = re.sub(value, f'[{value}]', entry['name'])
@@ -186,7 +191,7 @@ class DBUtils:
         def add_entries_by_description_sorting() -> None:
             """ Добавляем записи по сортировке описания """
             
-            nonlocal sorted_list, value
+            nonlocal sorted_list, value, list_of_all_income_expense
             for entry in list_of_all_income_expense:
                 if not value in entry['description']: continue
                 entry['description'] = re.sub(
@@ -195,6 +200,45 @@ class DBUtils:
                     entry['description']
                 )
                 sorted_list.append(entry)
+
+
+        def add_entries_by_amount_sorting_in_first_way() -> None:
+            """ Добавляем записи по сортировке суммы первым способом """
+
+            nonlocal sorted_list, value, list_of_all_income_expense
+
+            for entry in list_of_all_income_expense:
+                if not value[1] == entry['amount']: continue
+                sorted_list.append(entry)
+
+
+        def add_entries_by_amount_sorting_in_second_way() -> None:
+            """ Добавляем записи по сортировке суммы вторым способом """
+
+            nonlocal sorted_list, value, list_of_all_income_expense
+
+            for entry in list_of_all_income_expense:
+                range: List[int] = list(map(int, value[1].split('-')))
+                try:
+                    amount_of_entry: int = int(
+                        re.findall('\d+', entry['amount'])[0]
+                    )
+                except Exception:
+                    continue
+
+                if not range[0] <= amount_of_entry <= range[1]: continue
+                sorted_list.append(entry)
+
+
+        def add_entries_by_amount_sorting() -> None:
+            """ Добавляем записи по сортировке суммы """
+            
+            nonlocal sorted_list, value
+
+            if value[0] == 1:
+                add_entries_by_amount_sorting_in_first_way()
+            elif value[0] == 2:
+                add_entries_by_amount_sorting_in_second_way()
 
 
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
@@ -206,5 +250,7 @@ class DBUtils:
             add_entries_by_name_sorting()
         elif criteria == 'Описание':
             add_entries_by_description_sorting()
+        elif criteria == 'Сумма':
+            add_entries_by_amount_sorting()
 
         return sorted_list

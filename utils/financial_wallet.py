@@ -11,26 +11,12 @@ from .utils import (
 )
 from .db_utils import DBUtils
 from .editing_fw_utils import EditingIncomeExpensesFinancialWallet
+from .finding_fw_utils import FindingIncomeExpensesFinancialWallet
 
 
 
 class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
     """ Отображаем конкретный список записей (доходов/расходов) для пользователя """
-
-    def display_separate_entry(
-        self,
-        count: int,
-        entry: Union[IncomeData, ExpenseData]
-    ) -> None:
-        """ Отображаем отдельную запись """
-
-        text: str = '\n'
-        text += f' #{count} {entry["date"]} \n'
-        text += f' | {entry["name"]} \n'
-        text += f' | {entry["amount"]} \n'
-        text += f' | {entry["description"]} \n'
-        print(text)
-
 
     def execute_following_action_user(
         self,
@@ -43,10 +29,12 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         def get_users_choice() -> str:
             
             nonlocal split_list_of_entries
+            designation_find: str = 'f';
             designation_edit: str = 'e';
             designation_back: str = 'b';
             designation_exit: str = 'e';
             designations: List[str] = [
+                designation_find,
                 designation_edit,
                 designation_back,
                 designation_exit,
@@ -60,7 +48,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
             return self.get_user_response(
                 message='ВЫБЕРИТЕ что делать дальше (номер страницы или действие):',
                 possible_answers=possible_answers,
-                add_additional_actions='[e]dit'
+                add_additional_actions='[f]ind [e]dit'
             )
 
 
@@ -69,6 +57,12 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         users_choice: str = get_users_choice()
 
         match users_choice:
+            case 'f':
+                FindingIncomeExpensesFinancialWallet().start(category)
+                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
+                    category=category,
+                    part_of_entries=1
+                )
             case 'e':
                 EditingIncomeExpensesFinancialWallet().start(split_list_of_entries, part_of_entries)
                 DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(

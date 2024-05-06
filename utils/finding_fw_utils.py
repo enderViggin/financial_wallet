@@ -39,12 +39,41 @@ class FindingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 message='1/1 ВВЕДИТЕ подстроку названия:',
             )
 
+        def get_value_for_description() -> str:
+            """ Получаем значение для описания """
+            
+            nonlocal criteria
+            return self.get_user_response(
+                message='1/1 ВВЕДИТЕ подстроку описания:',
+            )
+
+        def get_value_for_amount() -> str:
+            """ Получаем значение для суммы """
+            
+            nonlocal criteria
+            while True:
+                value: str = self.get_user_response(
+                    message='1/1 ВВЕДИТЕ сумму или диапазон (например, 350 или 2700-41500):',
+                )
+                first_option: List = re.findall('\d+', value)
+                second_option: List = re.findall('\d+?-\d+', value)
+                if second_option: return (2, second_option[0])
+                if first_option: return (1, first_option[0])
+
 
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
 
         if criteria == 'Название':
             value: str = get_value_for_name()
             return value
+        elif criteria == 'Описание':
+            value: str = get_value_for_description()
+            return value
+        elif criteria == 'Сумма':
+            value: str = get_value_for_amount()
+            return value
+        elif criteria == 'Дата':
+            pass
         else:
             raise ValueError(f'criteria - {criteria}')
 
@@ -82,7 +111,7 @@ class FindingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
         category: str,
         criteria_number: str
     ) -> None:
-        """ Поиск записей по указанной критерии """
+        """ Поиск записей по указанному критерию """
 
         def get_entries_by_selected_criterion() -> None:
             """ Получаем записи по указанной критерии """
