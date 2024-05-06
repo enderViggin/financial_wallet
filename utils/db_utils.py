@@ -1,8 +1,8 @@
 from typing import List, Dict, Optional, Union, Tuple
 import json
 import os
-import uuid
 from collections import namedtuple
+import re
 
 from .utils import IncomeData, ExpenseData
 
@@ -164,3 +164,36 @@ class DBUtils:
 
         list_of_entries.append(edited_entry)
         self.save_db_changes(db)
+
+
+    def get_entries_by_selected_criterion(
+        self,
+        category: str,
+        criteria: str,
+        value: str
+    ) -> None:
+        """ Получаем записи по выбранному критерию """
+
+        def add_entries_by_name_sorting() -> None:
+            """ Добавляем записи по сортировке имени """
+            
+            nonlocal sorted_list, value
+            for entry in list_of_all_income_expense:
+                if not value in entry['name']: continue
+                entry['name'] = re.sub(value, f'[{value}]', entry['name'])
+                sorted_list.append(entry)
+
+
+
+        # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
+
+        sorted_list: Union[List[IncomeData], List[ExpenseData]] = []
+        list_of_all_income_expense = self.get_list_of_all_income_expense(category)
+
+        if criteria == 'Название':
+            add_entries_by_name_sorting()
+
+        return self.split_list_into_parts(
+            sorted_list,
+            2
+        )
