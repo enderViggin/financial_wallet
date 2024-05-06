@@ -55,7 +55,7 @@ class DBUtils:
         if intermediate_list: # Добавляем остатки
             final_list.append(intermediate_list)
 
-        split_list = SplitList(
+        split_list: SplitList = SplitList(
             final_list=final_list,
             total_number_of_parts=len(final_list)
         )
@@ -142,4 +142,25 @@ class DBUtils:
 
         db: Dict = self.get_db()
         db['expenses'].append(expense)
+        self.save_db_changes(db)
+
+
+    def save_edited_entry(self, edited_entry: Union[IncomeData, ExpenseData]) -> None:
+        """ Сохраняем отредактированную запись """
+        
+        db: Dict = self.get_db()
+
+        if edited_entry['category'] == 'income':
+            list_of_entries: List[IncomeData] = db['income']
+        elif edited_entry['category'] == 'expense':
+            list_of_entries: List[ExpenseData] = db['expenses']
+        else:
+            raise ValueError(f'Передана неверная категория - {edited_entry["category"]}')
+
+        for entry in list_of_entries:
+            if entry['id'] == edited_entry['id']:
+                list_of_entries.remove(entry)
+                break
+
+        list_of_entries.append(edited_entry)
         self.save_db_changes(db)

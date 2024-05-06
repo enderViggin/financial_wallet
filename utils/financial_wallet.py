@@ -35,33 +35,46 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
     def execute_following_action_user(
         self,
         category: str,
-        total_number_of_parts: int
+        split_list_of_entries: Tuple[List[List[Union[IncomeData, ExpenseData]]], int],
+        part_of_entries: int
     ) -> str:
         """ Получаем следующее действие пользователя """
 
-        designation_edit: str = 'e';
-        designation_back: str = 'b';
-        designation_exit: str = 'e';
-        designations: List[str] = [
-            designation_edit,
-            designation_back,
-            designation_exit,
-        ]
-        possible_answers: List[Union[str, int]] = list(map(
-            str,
-            list(range(1, total_number_of_parts + 1))
-        ))
-        _ = [possible_answers.append(designation) for designation in designations]
+        def get_users_choice() -> str:
+            
+            nonlocal split_list_of_entries
+            designation_edit: str = 'e';
+            designation_back: str = 'b';
+            designation_exit: str = 'e';
+            designations: List[str] = [
+                designation_edit,
+                designation_back,
+                designation_exit,
+            ]
+            possible_answers: List[Union[str, int]] = list(map(
+                str,
+                list(range(1, split_list_of_entries.total_number_of_parts + 1))
+            ))
+            _ = [possible_answers.append(designation) for designation in designations]
 
-        user_response: str = self.get_user_response(
-            message='ВЫБЕРИТЕ что делать дальше (номер страницы или действие):',
-            possible_answers=possible_answers,
-            add_additional_actions='[e]dit'
-        )
+            return self.get_user_response(
+                message='ВЫБЕРИТЕ что делать дальше (номер страницы или действие):',
+                possible_answers=possible_answers,
+                add_additional_actions='[e]dit'
+            )
 
-        match user_response:
+
+        # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
+
+        users_choice: str = get_users_choice()
+
+        match users_choice:
             case 'e':
-                pass
+                EditingIncomeExpensesFinancialWallet().start(split_list_of_entries, part_of_entries)
+                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
+                    category=category,
+                    part_of_entries=1
+                )
             case 'b':
                 MenuForViewingIncomeExpenseFinancialWallet().start()
             case 'e':
@@ -69,7 +82,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
             case _:
                 DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
                     category=category,
-                    part_of_entries=int(user_response)
+                    part_of_entries=int(users_choice)
                 )
 
 
@@ -127,7 +140,8 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         self.display_list_of_all_entries(split_list_of_entries, part_of_entries)
         self.execute_following_action_user(
             category,
-            split_list_of_entries.total_number_of_parts
+            split_list_of_entries,
+            part_of_entries
         )
 
 
