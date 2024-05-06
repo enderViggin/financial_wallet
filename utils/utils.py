@@ -175,3 +175,16 @@ class UtilsFinancialWallet(MessageToDisplayFinancialWallet):
                 print('\n [*] НЕВЕРНО, выберите вариант из указанных.\n')
 
 
+    def display_separate_entry(
+        self,
+        count: int,
+        entry: Union[IncomeData, ExpenseData]
+    ) -> None:
+        """ Отображаем отдельную запись """
+
+        text: str = '\n'
+        text += f' #{count} {entry["date"]} \n'
+        text += f' | {entry["name"]} \n'
+        text += f' | {entry["amount"]} \n'
+        text += f' | {entry["description"]} \n'
+        print(text)
