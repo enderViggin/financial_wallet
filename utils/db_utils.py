@@ -183,6 +183,18 @@ class DBUtils:
                 entry['name'] = re.sub(value, f'[{value}]', entry['name'])
                 sorted_list.append(entry)
 
+        def add_entries_by_description_sorting() -> None:
+            """ Добавляем записи по сортировке описания """
+            
+            nonlocal sorted_list, value
+            for entry in list_of_all_income_expense:
+                if not value in entry['description']: continue
+                entry['description'] = re.sub(
+                    value,
+                    f'[{value}]',
+                    entry['description']
+                )
+                sorted_list.append(entry)
 
 
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
@@ -192,8 +204,7 @@ class DBUtils:
 
         if criteria == 'Название':
             add_entries_by_name_sorting()
+        elif criteria == 'Описание':
+            add_entries_by_description_sorting()
 
-        return self.split_list_into_parts(
-            sorted_list,
-            2
-        )
+        return sorted_list
