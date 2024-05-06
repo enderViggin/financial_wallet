@@ -105,6 +105,27 @@ class MessageToDisplayFinancialWallet:
         print(message)
 
 
+    def show_entry_search_menu(
+        self,
+        category: str,
+        possible_criteria: Tuple[str, str, str, str]
+    ) -> None:
+        """ Показываем меню поиска записей """
+
+        if category == 'income':
+            text: str = '\n\n --- МЕНЮ ПОИСКА ЗАПИСЕЙ ДОХОДОВ\n --- Выберите дальнейшее действие\n\n'
+        elif category == 'expense':
+            text: str = '\n\n --- МЕНЮ ПОИСКА ЗАПИСЕЙ РАСХОДОВ\n --- Выберите дальнейшее действие\n\n'
+        else:
+            raise ValueError(f'Передана неверная категория - {category}')
+
+        for count, criteria in enumerate(possible_criteria):
+            text += f' [{count:02d}] {criteria}\n'
+
+        print(text)
+
+
+
 class UtilsFinancialWallet(MessageToDisplayFinancialWallet):
     """ Класс отвечающий за инструменты связанные с FinancialWallet """
 
