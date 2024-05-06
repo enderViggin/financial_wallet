@@ -264,3 +264,29 @@ class DBUtils:
             add_entries_by_date_sorting()
 
         return sorted_list
+
+
+    def get_current_balance(self) -> int:
+        """ Получаем текущий баланс """
+
+        balance: int = 0
+        list_of_all_income: List[IncomeData] = self.get_list_of_all_income_expense(
+            'income'
+        )
+        for income in list_of_all_income:
+            try:
+                amount = int(re.findall('\d+', income['amount'])[0])
+                balance += amount
+            except Exception:
+                continue
+        list_of_all_expense: List[IncomeData] = self.get_list_of_all_income_expense(
+            'expense'
+        )
+        for income in list_of_all_expense:
+            try:
+                amount = int(re.findall('\d+', income['amount'])[0])
+                balance -= amount
+            except Exception:
+                continue
+
+        return balance

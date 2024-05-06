@@ -368,7 +368,8 @@ class FinancialWallet(UtilsFinancialWallet):
     def start(self) -> None:
         """ Начинаем принимать ввод от пользователя и реагировать на него """
 
-        self.show_welcome_message()
+        current_balance: int = DBUtils().get_current_balance()
+        self.show_welcome_message(current_balance)
         user_response: int = self.get_user_response(
             message='ВЫБЕРИТЕ необходимое действие (введите номер):',
             type_of_response='int',

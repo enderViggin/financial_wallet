@@ -29,10 +29,10 @@ class ExpenseData(TypedDict):
 class MessageToDisplayFinancialWallet:
     """ Класс отвечающий за отображение сообщений для пользователя """
 
-    def show_welcome_message(self) -> None:
+    def show_welcome_message(self, current_balance: int) -> None:
         """ Показываем приветственное сообщение пользователю """
 
-        text: str = "\n ----- ДОБРО ПОЖАЛОВАТЬ В FinancialWallet\n ----- Здесь вы можете отслеживать свои доходы и расходы.\n"""
+        text: str = f'\n ----- ДОБРО ПОЖАЛОВАТЬ В FinancialWallet\n ----- Здесь вы можете отслеживать свои доходы и расходы.\n ----- БАЛАНС: {current_balance} руб.\n'
         print(text)
         self.show_options_for_initial_actions()
 
