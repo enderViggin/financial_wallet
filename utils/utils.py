@@ -2,7 +2,7 @@ from typing import TypedDict, Literal, Tuple, Optional, List, Union
 from uuid import UUID
 
 
-POSSIBLE_INITIAL_ACTIONS: Tuple[str, str, str] = ('Посмотреть доходы/расходы', 'Добавить доходы/расходы', 'Изменить доходы/расходы')
+POSSIBLE_INITIAL_ACTIONS: Tuple[str, str] = ('Посмотреть доходы/расходы', 'Добавить доходы/расходы')
 NUMBER_OF_POSSIBLE_INITIAL_ACTIONS: int = len(POSSIBLE_INITIAL_ACTIONS)
 
 class IncomeData(TypedDict):
@@ -188,3 +188,6 @@ class UtilsFinancialWallet(MessageToDisplayFinancialWallet):
         text += f' | {entry["amount"]} \n'
         text += f' | {entry["description"]} \n'
         print(text)
+
+
+
