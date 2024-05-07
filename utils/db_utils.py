@@ -269,24 +269,38 @@ class DBUtils:
     def get_current_balance(self) -> int:
         """ Получаем текущий баланс """
 
-        balance: int = 0
-        list_of_all_income: List[IncomeData] = self.get_list_of_all_income_expense(
-            'income'
-        )
-        for income in list_of_all_income:
-            try:
-                amount = int(re.findall('\d+', income['amount'])[0])
-                balance += amount
-            except Exception:
-                continue
-        list_of_all_expense: List[IncomeData] = self.get_list_of_all_income_expense(
-            'expense'
-        )
-        for income in list_of_all_expense:
-            try:
-                amount = int(re.findall('\d+', income['amount'])[0])
-                balance -= amount
-            except Exception:
-                continue
+        def add_all_income() -> None:
+            """ Добавляем весь доход """
 
+            nonlocal balance
+            list_of_all_income: List[IncomeData] = self.get_list_of_all_income_expense(
+                'income'
+            )
+            for income in list_of_all_income:
+                try:
+                    amount = int(re.findall('\d+', income['amount'])[0])
+                    balance += amount
+                except Exception:
+                    continue
+
+        def subtract_all_expense() -> None:
+            """ Вычесть весь расход """
+
+            nonlocal balance
+            list_of_all_expense: List[IncomeData] = self.get_list_of_all_income_expense(
+                'expense'
+            )
+            for income in list_of_all_expense:
+                try:
+                    amount = int(re.findall('\d+', income['amount'])[0])
+                    balance -= amount
+                except Exception:
+                    continue
+
+
+        # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
+
+        balance: int = 0
+        add_all_income()
+        subtract_all_expense()
         return balance
