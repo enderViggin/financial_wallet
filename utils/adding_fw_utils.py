@@ -117,20 +117,26 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
         return result
 
 
-    def add_income(self) -> None:
+    def add_income(self) -> Optional[IncomeData]:
         """ Добавляем доход указанный пользователем """
 
-        information_about_income: IncomeData = self.get_information_about_income_expense('income')
-        if not information_about_income: return
-        DBUtils().add_new_income(information_about_income)
+        information_about_income: Optional[IncomeData] = self.get_information_about_income_expense('income')
+        if information_about_income:
+            DBUtils().add_new_income(information_about_income)
+            return information_about_income
+        else:
+            return None
 
 
-    def add_expense(self) -> None:
+    def add_expense(self) -> Optional[ExpenseData]:
         """ Добавляем расход указанный пользователем """
 
         information_about_expense: Optional[ExpenseData] = self.get_information_about_income_expense('expense')
-        if not information_about_expense: return
-        DBUtils().add_new_expense(information_about_expense)
+        if information_about_expense:
+            DBUtils().add_new_expense(information_about_expense)
+            return information_about_expense
+        else:
+            return None
 
 
     def start(self) -> None:
@@ -144,11 +150,11 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 case 'q':
                     exit()
                 case '0':
-                    result = self.add_income()
+                    result: Optional[IncomeData] = self.add_income()
                     if not result: continue
                     self.show_message_of_successfully_added_income_expense('income')
                 case '1':
-                    result = self.add_expense()
+                    result: Optional[ExpenseData] = self.add_expense()
                     if not result: continue
                     self.show_message_of_successfully_added_income_expense('expense')
 
