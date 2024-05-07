@@ -149,7 +149,7 @@ class UtilsFinancialWallet(MessageToDisplayFinancialWallet):
             text_of_message: str = f'\n - '
             if type(add_additional_actions) == str:
                 text_of_message += f'{add_additional_actions} '
-            text_of_message += f'[b]ack [e]xit\n - {message}\n > '
+            text_of_message += f'[b]ack [q]uit\n - {message}\n > '
 
             return text_of_message
 

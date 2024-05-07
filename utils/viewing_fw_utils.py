@@ -28,12 +28,12 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
             designation_find: str = 'f';
             designation_edit: str = 'e';
             designation_back: str = 'b';
-            designation_exit: str = 'e';
+            designation_quit: str = 'q';
             designations: List[str] = [
                 designation_find,
                 designation_edit,
                 designation_back,
-                designation_exit,
+                designation_quit,
             ]
             possible_answers: List[Union[str, int]] = list(map(
                 str,
@@ -67,7 +67,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
                 )
             case 'b':
                 MenuForViewingIncomeExpenseFinancialWallet().start()
-            case 'e':
+            case 'q':
                 exit()
             case _:
                 DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
@@ -147,12 +147,12 @@ class MenuForViewingIncomeExpenseFinancialWallet(UtilsFinancialWallet):
         """ Получаем следующее действие пользователя """
 
         designation_back: str = 'b';
-        designation_exit: str = 'e';
+        designation_quit: str = 'q';
         possible_answers: List[Union[str, int]] = list(map(
             str,
             list(range(self.number_of_possible_actions))
         ))
-        for designation in [designation_back, designation_exit]:
+        for designation in [designation_back, designation_quit]:
             possible_answers.append(designation)
 
         user_response: str = self.get_user_response(
@@ -169,7 +169,7 @@ class MenuForViewingIncomeExpenseFinancialWallet(UtilsFinancialWallet):
         match user_response:
             case 'b':
                 return
-            case 'e':
+            case 'q':
                 exit()
             case '0':
                 DisplayListOfEntriesFinancialWallet().display_list_of_income_expense('income')

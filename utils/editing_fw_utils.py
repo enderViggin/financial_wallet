@@ -32,7 +32,7 @@ class EditingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 add_additional_actions='[s]kip'
             )
 
-            if response == 'e':
+            if response == 'q':
                 exit()
             else:
                 return response
@@ -44,7 +44,7 @@ class EditingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 add_additional_actions='[s]kip'
             )
 
-            if response == 'e':
+            if response == 'q':
                 exit()
             else:
                 return response
@@ -55,7 +55,7 @@ class EditingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 add_additional_actions='[s]kip'
             )
 
-            if response == 'e':
+            if response == 'q':
                 exit()
             else:
                 return response
@@ -115,10 +115,10 @@ class EditingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
 
             nonlocal split_list_of_entries
             designation_back: str = 'b';
-            designation_exit: str = 'e';
+            designation_quit: str = 'q';
             designations: List[str] = [
                 designation_back,
-                designation_exit,
+                designation_quit,
             ]
             possible_answers: List[Union[str, int]] = list(map(
                 str,
@@ -139,7 +139,7 @@ class EditingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
         match users_choice:
             case 'b':
                 return
-            case 'e':
+            case 'q':
                 exit()
             case _:
                 self.edit_selected_entry(split_list_of_entries, part_of_entries, users_choice)
