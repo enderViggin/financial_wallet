@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple, Literal
+from typing import Union, List, Tuple, Literal, Optional
 import uuid
 from uuid import UUID
 from datetime import datetime
@@ -39,10 +39,13 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
         return user_response
 
 
-    def get_information_about_income_expense(self, category: str) ->  Union[IncomeData, ExpenseData]:
+    def get_information_about_income_expense(
+        self,
+        category: str
+    ) ->  Optional[Union[IncomeData, ExpenseData]]:
         """ Получаем информацию о доходе/расходе для последующего добавления """
 
-        def get_name() -> str:
+        def get_name() -> Optional[str]:
             """ Получаем название """
 
             user_response: str = self.get_user_response(
@@ -50,13 +53,13 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
             )
             match user_response:
                 case 'b':
-                    AddingIncomeExpensesFinancialWallet().start()
+                    return
                 case 'q':
                     exit()
                 case _:
                     return user_response
 
-        def get_amount() -> int:
+        def get_amount() -> Optional[int]:
             """ Получаем сумму продукта """
 
             user_response: Union[int, Literal['b', 'e']] = self.get_user_response(
@@ -64,7 +67,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
             )
             match user_response:
                 case 'b':
-                    AddingIncomeExpensesFinancialWallet().start()
+                    return
                 case 'q':
                     exit()
                 case _:
@@ -79,7 +82,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
             )
             match user_response:
                 case 'b':
-                    AddingIncomeExpensesFinancialWallet().start()
+                    return
                 case 'q':
                     exit()
                 case _:
@@ -92,9 +95,15 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
             raise ValueError(f'Передана неверная категория - {category}')
 
         new_id: UUID = str(uuid.uuid4())
-        name: str = get_name()
-        amount: int = get_amount()
-        description: str = get_description()
+        name: Optional[str] = get_name()
+        if not name: return
+
+        amount: Optional[int] = get_amount()
+        if not amount: return
+
+        description: Optional[str] = get_description()
+        if not description: return
+
         date_of_addition: datetime = datetime.now().strftime('%H:%M:%S %d-%m-%Y')
 
         result: Union[IncomeData, ExpenseData] = {
@@ -112,30 +121,34 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
         """ Добавляем доход указанный пользователем """
 
         information_about_income: IncomeData = self.get_information_about_income_expense('income')
+        if not information_about_income: return
         DBUtils().add_new_income(information_about_income)
 
 
     def add_expense(self) -> None:
         """ Добавляем расход указанный пользователем """
 
-        information_about_expense: ExpenseData = self.get_information_about_income_expense('expense')
+        information_about_expense: Optional[ExpenseData] = self.get_information_about_income_expense('expense')
+        if not information_about_expense: return
         DBUtils().add_new_expense(information_about_expense)
 
 
     def start(self) -> None:
-        self.show_menu_for_adding_income_expenses(self.possible_actions)
-        user_response: str = self.get_following_action_user()
+        while True:
+            self.show_menu_for_adding_income_expenses(self.possible_actions)
+            user_response: str = self.get_following_action_user()
 
-        match user_response:
-            case 'b':
-                return
-            case 'q':
-                exit()
-            case '0':
-                self.add_income()
-                self.show_message_of_successfully_added_income_expense('income')
-            case '1':
-                self.add_expense()
-                self.show_message_of_successfully_added_income_expense('expense')
+            match user_response:
+                case 'b':
+                    return
+                case 'q':
+                    exit()
+                case '0':
+                    result = self.add_income()
+                    if not result: continue
+                    self.show_message_of_successfully_added_income_expense('income')
+                case '1':
+                    result = self.add_expense()
+                    if not result: continue
+                    self.show_message_of_successfully_added_income_expense('expense')
 
-        AddingIncomeExpensesFinancialWallet().start()
