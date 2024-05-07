@@ -122,7 +122,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
 
         information_about_income: Optional[IncomeData] = self.get_information_about_entries('income')
         if information_about_income:
-            DBUtils().add_new_income(information_about_income)
+            DBUtils().add_new_entry(information_about_income)
             return information_about_income
         else:
             return None
@@ -133,7 +133,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
 
         information_about_expense: Optional[ExpenseData] = self.get_information_about_entries('expense')
         if information_about_expense:
-            DBUtils().add_new_expense(information_about_expense)
+            DBUtils().add_new_entry(information_about_expense)
             return information_about_expense
         else:
             return None

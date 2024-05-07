@@ -71,6 +71,7 @@ class DBUtils:
         list_of_entries_by_date: Union[List[IncomeData], List[ExpenseData]] = sorted(
             list_of_all_entries,
             key=lambda entry: entry['date'],
+            reverse=True
         )
         return list_of_entries_by_date
 
@@ -134,19 +135,16 @@ class DBUtils:
         return final_list
 
 
-    def add_new_income(self, income: IncomeData) -> None:
-        """ Добавляем новый доход в БД """
-
-        db: Dict = self.get_db()
-        db['income'].append(income)
-        self.save_db_changes(db)
-
-
-    def add_new_expense(self, expense: ExpenseData) -> None:
+    def add_new_entry(self, entry: Union[IncomeData, ExpenseData]) -> None:
         """ Добавляем новый расход в БД """
 
         db: Dict = self.get_db()
-        db['expenses'].append(expense)
+
+        if entry['category'] == 'income':
+            db['income'].append(entry)
+        elif entry['category'] == 'expense':
+            db['expenses'].append(entry)
+
         self.save_db_changes(db)
 
 
