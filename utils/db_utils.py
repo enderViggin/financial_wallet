@@ -206,8 +206,12 @@ class DBUtils:
             nonlocal sorted_list, value, list_of_all_entries
 
             for entry in list_of_all_entries:
-                if not value[1] == entry['amount']: continue
-                sorted_list.append(entry)
+                try:
+                    entry_amount: str = re.findall('\d+', entry['amount'])[0]
+                    if not value[1] == entry_amount : continue
+                    sorted_list.append(entry)
+                except Exception:
+                    continue
 
 
         def add_entries_by_amount_sorting_in_second_way() -> None:
