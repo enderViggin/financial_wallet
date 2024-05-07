@@ -75,14 +75,14 @@ class DBUtils:
         return list_of_entries_by_date
 
 
-    def get_list_of_all_income_expense(
+    def get_list_of_all_entries(
         self,
         category: str,
         sort: Optional[str] = 'date',
         number_of_parts: int = 3,
         type_of_entries: str = 'all'
     ) -> Union[Union[List[IncomeData], List[ExpenseData]], Tuple[List[List], int]]:
-        """ Получаем список всех доходов """
+        """ Получаем список всех записей (доходов/расходов) """
 
         def get_list_of_all_entries() -> Union[List[IncomeData], List[ExpenseData]]:
             
@@ -182,8 +182,8 @@ class DBUtils:
         def add_entries_by_name_sorting() -> None:
             """ Добавляем записи по сортировке имени """
             
-            nonlocal sorted_list, value, list_of_all_income_expense
-            for entry in list_of_all_income_expense:
+            nonlocal sorted_list, value, list_of_all_entries
+            for entry in list_of_all_entries:
                 if not value in entry['name']: continue
                 entry['name'] = re.sub(value, f'[{value}]', entry['name'])
                 sorted_list.append(entry)
@@ -191,8 +191,8 @@ class DBUtils:
         def add_entries_by_description_sorting() -> None:
             """ Добавляем записи по сортировке описания """
             
-            nonlocal sorted_list, value, list_of_all_income_expense
-            for entry in list_of_all_income_expense:
+            nonlocal sorted_list, value, list_of_all_entries
+            for entry in list_of_all_entries:
                 if not value in entry['description']: continue
                 entry['description'] = re.sub(
                     value,
@@ -205,9 +205,9 @@ class DBUtils:
         def add_entries_by_amount_sorting_in_first_way() -> None:
             """ Добавляем записи по сортировке суммы первым способом """
 
-            nonlocal sorted_list, value, list_of_all_income_expense
+            nonlocal sorted_list, value, list_of_all_entries
 
-            for entry in list_of_all_income_expense:
+            for entry in list_of_all_entries:
                 if not value[1] == entry['amount']: continue
                 sorted_list.append(entry)
 
@@ -215,9 +215,9 @@ class DBUtils:
         def add_entries_by_amount_sorting_in_second_way() -> None:
             """ Добавляем записи по сортировке суммы вторым способом """
 
-            nonlocal sorted_list, value, list_of_all_income_expense
+            nonlocal sorted_list, value, list_of_all_entries
 
-            for entry in list_of_all_income_expense:
+            for entry in list_of_all_entries:
                 range: List[int] = list(map(int, value[1].split('-')))
                 try:
                     amount_of_entry: int = int(
@@ -243,8 +243,8 @@ class DBUtils:
         def add_entries_by_date_sorting() -> None:
             """ Добавляем записи по сортировке даты """
             
-            nonlocal sorted_list, value, list_of_all_income_expense
-            for entry in list_of_all_income_expense:
+            nonlocal sorted_list, value, list_of_all_entries
+            for entry in list_of_all_entries:
                 if not value[1] in entry['date']: continue
                 sorted_list.append(entry)
 
@@ -252,7 +252,7 @@ class DBUtils:
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
 
         sorted_list: Union[List[IncomeData], List[ExpenseData]] = []
-        list_of_all_income_expense = self.get_list_of_all_income_expense(category)
+        list_of_all_entries = self.get_list_of_all_entries(category)
 
         if criteria == 'Название':
             add_entries_by_name_sorting()
@@ -273,7 +273,7 @@ class DBUtils:
             """ Добавляем весь доход """
 
             nonlocal balance
-            list_of_all_income: List[IncomeData] = self.get_list_of_all_income_expense(
+            list_of_all_income: List[IncomeData] = self.get_list_of_all_entries(
                 'income'
             )
             for income in list_of_all_income:
@@ -287,7 +287,7 @@ class DBUtils:
             """ Вычесть весь расход """
 
             nonlocal balance
-            list_of_all_expense: List[IncomeData] = self.get_list_of_all_income_expense(
+            list_of_all_expense: List[IncomeData] = self.get_list_of_all_entries(
                 'expense'
             )
             for income in list_of_all_expense:

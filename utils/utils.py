@@ -47,7 +47,7 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
-    def show_menu_for_viewing_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
+    def show_menu_for_viewing_entries(self, possible_actions: Tuple[str, str]) -> None:
         """ Показываем меню просмотра доходов/расходов """
 
         text: str = '\n\n ----- МЕНЮ ПРОСМОТРА ДОХОДЫ/РАСХОДЫ\n ----- Выберите дальнейшее действие\n\n'
@@ -58,7 +58,7 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
-    def show_menu_for_adding_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
+    def show_menu_for_adding_entries(self, possible_actions: Tuple[str, str]) -> None:
         """ Показываем меню добавления доходов/расходов """
 
         text: str = '\n\n ### МЕНЮ ДОБАВЛЕНИЯ ДОХОДОВ/РАСХОДОВ ###\n ### Выберите дальнейшее действие\n\n'
@@ -69,7 +69,7 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
-    def show_menu_for_editing_income_expenses(self, possible_actions: Tuple[str, str]) -> None:
+    def show_menu_for_editing_entries(self, possible_actions: Tuple[str, str]) -> None:
         """ Показываем меню изменения доходов/расходов """
 
         text: str = '\n\n --- МЕНЮ ИЗМЕНЕНИЯ ДОХОДОВ/РАСХОДОВ \n --- Выберите дальнейшее действие\n\n'
@@ -80,7 +80,7 @@ class MessageToDisplayFinancialWallet:
         print(text)
 
 
-    def show_message_of_successfully_added_income_expense(self, category: str) -> None:
+    def show_message_of_successfully_added_entries(self, category: str) -> None:
         """ Показываем сообщение об успешно добавленном доходе/расходе """
 
         if category == 'income':
@@ -93,7 +93,7 @@ class MessageToDisplayFinancialWallet:
         print(f'\n [*] {message}')
 
 
-    def show_initial_message_for_list_of_income_expenses(self, category: str) -> None:
+    def show_initial_message_for_list_of_entries(self, category: str) -> None:
         """ Показываем начальное сообщение для списка доходов """
 
         if category == 'income':

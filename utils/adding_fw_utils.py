@@ -39,7 +39,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
         return user_response
 
 
-    def get_information_about_income_expense(
+    def get_information_about_entries(
         self,
         category: str
     ) ->  Optional[Union[IncomeData, ExpenseData]]:
@@ -120,7 +120,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
     def add_income(self) -> Optional[IncomeData]:
         """ Добавляем доход указанный пользователем """
 
-        information_about_income: Optional[IncomeData] = self.get_information_about_income_expense('income')
+        information_about_income: Optional[IncomeData] = self.get_information_about_entries('income')
         if information_about_income:
             DBUtils().add_new_income(information_about_income)
             return information_about_income
@@ -131,7 +131,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
     def add_expense(self) -> Optional[ExpenseData]:
         """ Добавляем расход указанный пользователем """
 
-        information_about_expense: Optional[ExpenseData] = self.get_information_about_income_expense('expense')
+        information_about_expense: Optional[ExpenseData] = self.get_information_about_entries('expense')
         if information_about_expense:
             DBUtils().add_new_expense(information_about_expense)
             return information_about_expense
@@ -141,7 +141,7 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
 
     def start(self) -> None:
         while True:
-            self.show_menu_for_adding_income_expenses(self.possible_actions)
+            self.show_menu_for_adding_entries(self.possible_actions)
             user_response: str = self.get_following_action_user()
 
             match user_response:
@@ -152,9 +152,9 @@ class AddingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
                 case '0':
                     result: Optional[IncomeData] = self.add_income()
                     if not result: continue
-                    self.show_message_of_successfully_added_income_expense('income')
+                    self.show_message_of_successfully_added_entries('income')
                 case '1':
                     result: Optional[ExpenseData] = self.add_expense()
                     if not result: continue
-                    self.show_message_of_successfully_added_income_expense('expense')
+                    self.show_message_of_successfully_added_entries('expense')
 

@@ -55,13 +55,13 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         match users_choice:
             case 's':
                 SearchingIncomeExpensesFinancialWallet().start(category)
-                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
+                DisplayListOfEntriesFinancialWallet().display_list_of_entries(
                     category=category,
                     part_of_entries=1
                 )
             case 'e':
                 EditingIncomeExpensesFinancialWallet().start(split_list_of_entries, part_of_entries)
-                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
+                DisplayListOfEntriesFinancialWallet().display_list_of_entries(
                     category=category,
                     part_of_entries=1
                 )
@@ -70,7 +70,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
             case 'q':
                 exit()
             case _:
-                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
+                DisplayListOfEntriesFinancialWallet().display_list_of_entries(
                     category=category,
                     part_of_entries=int(users_choice)
                 )
@@ -99,7 +99,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         print(pagination)
 
 
-    def display_list_of_income_expense(
+    def display_list_of_entries(
         self,
         category: str,
         part_of_entries: int = 1
@@ -110,12 +110,12 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
             """ Получаем разделенный список записей """
             
             if category == 'income':
-                return DBUtils().get_list_of_all_income_expense(
+                return DBUtils().get_list_of_all_entries(
                     category=category,
                     type_of_entries='splitted'
                 )
             elif category == 'expense':
-                return DBUtils().get_list_of_all_income_expense(
+                return DBUtils().get_list_of_all_entries(
                     category=category,
                     type_of_entries='splitted'
                 )
@@ -126,7 +126,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         # ВЫШЕ ОПРЕДЕЛЕНИЕ ФУНКЦИЙ
 
         split_list_of_entries: Tuple[List[List[IncomeData]], int] = get_split_list_of_entries()
-        self.show_initial_message_for_list_of_income_expenses(category)
+        self.show_initial_message_for_list_of_entries(category)
         self.display_list_of_all_entries(split_list_of_entries, part_of_entries)
         self.execute_following_action_user(
             category,
@@ -163,7 +163,7 @@ class MenuForViewingIncomeExpenseFinancialWallet(UtilsFinancialWallet):
 
 
     def start(self) -> None:
-        self.show_menu_for_viewing_income_expenses(self.possible_actions)
+        self.show_menu_for_viewing_entries(self.possible_actions)
         user_response: str = self.get_following_action_user()
 
         match user_response:
@@ -172,7 +172,7 @@ class MenuForViewingIncomeExpenseFinancialWallet(UtilsFinancialWallet):
             case 'q':
                 exit()
             case '0':
-                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense('income')
+                DisplayListOfEntriesFinancialWallet().display_list_of_entries('income')
             case '1':
-                DisplayListOfEntriesFinancialWallet().display_list_of_income_expense('expense')
+                DisplayListOfEntriesFinancialWallet().display_list_of_entries('expense')
 
