@@ -6,7 +6,7 @@ from .utils import (
     UtilsFinancialWallet,
 )
 from .editing_fw_utils import EditingIncomeExpensesFinancialWallet
-from .finding_fw_utils import FindingIncomeExpensesFinancialWallet
+from .searching_fw_utils import SearchingIncomeExpensesFinancialWallet
 from .db_utils import DBUtils
 
 
@@ -25,12 +25,12 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         def get_users_choice() -> str:
             
             nonlocal split_list_of_entries
-            designation_find: str = 'f';
+            designation_search: str = 's';
             designation_edit: str = 'e';
             designation_back: str = 'b';
             designation_quit: str = 'q';
             designations: List[str] = [
-                designation_find,
+                designation_search,
                 designation_edit,
                 designation_back,
                 designation_quit,
@@ -44,7 +44,7 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
             return self.get_user_response(
                 message='ВЫБЕРИТЕ что делать дальше (номер страницы или действие):',
                 possible_answers=possible_answers,
-                add_additional_actions='[f]ind [e]dit'
+                add_additional_actions='[s]earch [e]dit'
             )
 
 
@@ -53,8 +53,8 @@ class DisplayListOfEntriesFinancialWallet(UtilsFinancialWallet):
         users_choice: str = get_users_choice()
 
         match users_choice:
-            case 'f':
-                FindingIncomeExpensesFinancialWallet().start(category)
+            case 's':
+                SearchingIncomeExpensesFinancialWallet().start(category)
                 DisplayListOfEntriesFinancialWallet().display_list_of_income_expense(
                     category=category,
                     part_of_entries=1

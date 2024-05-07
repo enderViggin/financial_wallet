@@ -9,7 +9,7 @@ from .utils import (
 from .db_utils import DBUtils
 
 
-class FindingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
+class SearchingIncomeExpensesFinancialWallet(UtilsFinancialWallet):
     """ Класс связанный с поиском доходов/расходов по определенным критериям """
 
     def __init__(self):
