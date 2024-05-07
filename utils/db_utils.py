@@ -80,7 +80,7 @@ class DBUtils:
         self,
         category: str,
         sort: Optional[str] = 'date',
-        number_of_parts: int = 3,
+        number_of_parts: int = 5,
         type_of_entries: str = 'all'
     ) -> Union[Union[List[IncomeData], List[ExpenseData]], Tuple[List[List], int]]:
         """ Получаем список всех записей (доходов/расходов) """
