@@ -28,7 +28,7 @@ class DBUtils:
             return database
 
 
-    def save_db_changes(self,  db: Dict) -> None:
+    def save_db_changes(self, db: Dict) -> None:
         """ Сохраняем проделанные изменения с БД """
 
         with open(self.get_path_to_db(), 'w') as file:
@@ -136,7 +136,7 @@ class DBUtils:
 
 
     def add_new_entry(self, entry: Union[IncomeData, ExpenseData]) -> None:
-        """ Добавляем новый расход в БД """
+        """ Добавляем запись в БД """
 
         db: Dict = self.get_db()
 
